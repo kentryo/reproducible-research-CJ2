@@ -5,26 +5,23 @@ date: "October 27, 2016"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+##Synopsis
+
+##Data Processing
+```{r data_proc, echo=TRUE, cache=TRUE}
+  data_raw <- read.csv("repdata%2Fdata%2FStormData.csv.bz2")
+  library(ggplot2)
 ```
 
-## Rkdown
+##Question 1: Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r plot_fatalities, echo=TRUE, cache=TRUE}
+  data_fatalities <- aggregate(FATALITIES ~ EVTYPE, data = data_raw, FUN = sum)
+  data_fatalities_descending <- data_fatalities[order(-data_fatalities$FATALITIES), ]
+  bar_fatalities <- ggplot(data = data_fatalities_descending[1:20, ], aes(x = EVTYPE, y = FATALITIES)) + geom_bar(stat = "identity") + theme(axis.text.x=element_text(angle=45, hjust=1)) + labs(title = "TOP 20 EVENTS CAUSING FATALITIES", x = "EVENT TYPE", y = "TOTAL FATALITIES")
+  data_injuries <- aggregate(INJURIES ~ EVTYPE, data = data_raw, FUN = sum)
+  data_injuries_descending <- data_injuries[order(-data_injuries$INJURIES), ]
+  bar_injuries <- ggplot(data = data_injuries_descending[1:20, ], aes(x = EVTYPE, y = INJURIES)) + geom_bar(stat = "identity") + theme(axis.text.x=element_text(angle=45, hjust=1)) + labs(title = "TOP 20 EVENTS CAUSING INJURIES", x = "EVENT TYPE", y = "TOTAL INJURIES")
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+  ```
